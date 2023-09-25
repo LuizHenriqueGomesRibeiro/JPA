@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Olá JSF</title>
+</h:head>
+<h:body>
+	<h:form id="formPessoa">
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Id:" />
+			<h:inputText readonly="true" value="#{pessoaBean.pessoa.id}" />
+
+			<h:outputLabel value="Nome:" />
+			<h:inputText value="#{pessoaBean.pessoa.nome}" />
+
+			<h:outputLabel value="Sobrenome:" />
+			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" />
+
+			<h:outputLabel value="Idade:" />
+			<h:inputText value="#{pessoaBean.pessoa.idade}" />
+		</h:panelGrid>
+		<h:outputLabel/>
+		<h:panelGroup>
+			<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" />
+			<h:commandButton value="Merge" action="#{pessoaBean.merge}" />
+			<h:commandButton value="Limpar campos" action="#{pessoaBean.limpar}" />
+			<h:commandButton value="Deletar registro" action="#{pessoaBean.deletar}" />
+		</h:panelGroup>
+		<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="2">
+			<f:facet name="header">
+				Lista de pessoas cadastradas	
+			</f:facet>
+			<h:column>
+				<f:facet name="header">Id</f:facet>
+				<h:outputText value="#{pessoa.id}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Nome</f:facet>
+				<h:outputText value="#{pessoa.nome}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Sobrenome</f:facet>
+				<h:outputText value="#{pessoa.sobrenome}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Idade</f:facet>
+				<h:outputText value="#{pessoa.idade}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Configurações</f:facet>
+				<h:commandLink value="Editar">
+					<f:setPropertyActionListener value="#{pessoa}"
+						target="#{pessoaBean.pessoa}" />
+				</h:commandLink>
+				<h:commandLink value="Excluir" action="#{pessoaBean.deletar}">
+					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}"/>
+				</h:commandLink>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+</h:body>
+</html>
+
