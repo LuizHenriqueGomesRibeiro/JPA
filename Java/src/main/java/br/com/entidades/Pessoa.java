@@ -22,11 +22,17 @@ public class Pessoa implements Serializable {
 	private Integer idade;
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
-
+	private Boolean ativo;
+	
+	public Boolean getAtivo() {
+		return ativo;
+	}
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
 	public Pessoa() {
 		// TODO Auto-generated constructor stub
 	}
-	
 	public Long getId() {
 		return id;
 	}

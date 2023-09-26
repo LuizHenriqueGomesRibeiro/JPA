@@ -4,11 +4,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-	<title>Olá JSF</title>
+	<title>Cadastro de usuário</title>
 </h:head>
 <h:body>
 	<h:form id="formPessoa">
 		<h:panelGrid columns="2">
+			<f:facet name="header">
+				<h:outputText value="Cadastro de usuário" />
+			</f:facet>
 			<h:outputLabel value="Id:" />
 			<h:inputText readonly="true" value="#{pessoaBean.pessoa.id}" />
 
@@ -20,6 +23,9 @@
 
 			<h:outputLabel value="Idade:" />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
+			
+			<h:outputText value="Ativo:" />
+			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}" />
 		</h:panelGrid>
 		<h:outputLabel/>
 		<h:panelGroup>
@@ -49,13 +55,15 @@
 				<h:outputText value="#{pessoa.idade}" />
 			</h:column>
 			<h:column>
-				<f:facet name="header">Configurações</f:facet>
+				<f:facet name="header">Editar</f:facet>
 				<h:commandLink value="Editar">
-					<f:setPropertyActionListener value="#{pessoa}"
-						target="#{pessoaBean.pessoa}" />
-				</h:commandLink>
+					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
+				</h:commandLink>				
+			</h:column>
+			<h:column>
+				<f:facet name="header">Excluir</f:facet>
 				<h:commandLink value="Excluir" action="#{pessoaBean.deletar}">
-					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}"/>
+					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
 				</h:commandLink>
 			</h:column>
 		</h:dataTable>
