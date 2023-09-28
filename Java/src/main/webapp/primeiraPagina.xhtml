@@ -4,7 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-	<title>Cadastro de usuário</title>
+	<title>Login</title>
 </h:head>
 <h:body>
 	<h:form id="formPessoa">
@@ -24,8 +24,22 @@
 			<h:outputLabel value="Idade:" />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
 			
+			<h:outputText value="Login:" />
+			<h:inputText value="#{pessoaBean.pessoa.login}" />
+			
+			<h:outputText value="Senha:" />
+			<h:inputSecret value="#{pessoaBean.pessoa.senha}" />
+			
 			<h:outputText value="Ativo:" />
 			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}" />
+			
+			<h:selectOneMenu id="perfil" value="#{pessoaBean.pessoa.perfil}" required="false">
+				<f:selectItem itemLabel="[-selecione-]" noSelectionOption="true"/>
+				<f:selectItem itemValue="ADMINISTRADOR" itemLabel="Administrador"/>
+				<f:selectItem itemValue="SECRETARIO" itemLabel="Secretário"/>
+				<f:selectItem itemValue="RECEPCIONISTA" itemLabel="Recepcionista"/>
+			</h:selectOneMenu>
+			
 		</h:panelGrid>
 		<h:outputLabel/>
 		<h:panelGroup>
@@ -68,6 +82,9 @@
 			</h:column>
 		</h:dataTable>
 	</h:form>
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{pessoaBean.carregarPessoas}"/>
+	</f:metadata>
 </h:body>
 </html>
 
