@@ -33,7 +33,7 @@ public class FilterAut implements Filter{
 		HttpSession session = req.getSession();
 		
 		Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
-		String url = req.getServletPath();
+		String url = req.getServletPath();					  
 		
 		if(!url.equalsIgnoreCase("index.jsf") && usuarioLogado == null) {
 			RequestDispatcher dispache = request.getRequestDispatcher("/index.jsf");

@@ -10,13 +10,11 @@ public class ImplementacaoDAOpessoa implements IDdaoPessoa {
 	public Pessoa consultarUsuario(String login, String senha) {
 		
 		Pessoa pessoa = null;
-		
 		EntityManager entityManager = JPAUtil.getEntityManager();
 		EntityTransaction transacao = entityManager.getTransaction();
 		
 		transacao.begin();
-		pessoa = (Pessoa) entityManager.createQuery("SELECT p FROM pessoa p WHERE p.login = '" + login + "' AND p.senha = '" + senha + "'").getSingleResult();	
-		
+		pessoa = (Pessoa) entityManager.createQuery("SELECT p FROM Pessoa p WHERE p.login = '" + login + "' AND p.senha = '" + senha + "'").getSingleResult();	
 		transacao.commit();
 		entityManager.close();
 		
