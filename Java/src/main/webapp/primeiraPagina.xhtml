@@ -7,7 +7,13 @@
 	<title>Login</title>
 </h:head>
 <h:body>
-	<h:form id="formPessoa">
+
+	<h:form>
+		<h:commandLink value="Lançamentos" action="lancamento"/>
+		<h:commandLink value="Administração" style="margin-left: 12px;" action="primeirapagina"/>
+		<h:commandLink value="Trocas usuário" style="margin-left: 12px;" action="index"/>
+	</h:form>
+	<h:form id="formPessoa" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
 		<h:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="Cadastro de usuário" />
@@ -46,7 +52,7 @@
 			<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" />
 			<h:commandButton value="Merge" action="#{pessoaBean.merge}" />
 			<h:commandButton value="Limpar campos" action="#{pessoaBean.limpar}" />
-			<h:commandButton value="Deletar registro" action="#{pessoaBean.deletar}" />
+			<h:commandButton rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}" value="Deletar registro" action="#{pessoaBean.deletar}"/>
 		</h:panelGroup>
 		<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="2">
 			<f:facet name="header">

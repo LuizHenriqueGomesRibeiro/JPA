@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Lançamentos</title>
+</h:head>
+<h:body>
+	<h:form>
+		<h:commandLink value="Lançamentos" action="lancamento"/>
+		<h:commandLink value="Administração" style="margin-left: 12px;" action="primeirapagina"/>
+		<h:commandLink value="Trocas usuário" style="margin-left: 12px;" action="index"/>
+	</h:form>
+	<h:form id="formLancamento">
+		<h:panelGrid columns="2">
+			<f:facet name="header">
+				<h:outputText value="Lançamentos"/>
+			</f:facet>
+			<h:outputLabel value="Id:" />
+			<h:inputText value="#{lancamentoBean.lancamento.id}" readonly="true"/>
+			
+			<h:outputLabel value="Nota:" />
+			<h:inputText value="#{lancamentoBean.lancamento.numeroNotaFiscal}"/>
+			
+			<h:outputLabel value="Empresa de origem:" />
+			<h:inputText value="#{lancamentoBean.lancamento.empresaOrigem}"/>
+			
+			<h:outputLabel value="Empresa de destino:" />
+			<h:inputText value="#{lancamentoBean.lancamento.empresaDestino}"/>
+		</h:panelGrid>
+		<h:commandButton value="Salvar" action="#{lancamentoBean.salvar}" />
+		<h:commandButton value="Merge" action="#{lancamentoBean.merge}" />
+		<h:commandButton value="Limpar campos" action="#{lancamentoBean.limpar}" />
+		<h:commandButton rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}" value="Deletar registro" action="#{lancamentoBean.deletar}"/>
+		<h:dataTable value="#{lancamentoBean.lancamentos}" var="lancamento" border="2">
+			<f:facet name="header">
+				Lista de lançamentos	
+			</f:facet>
+			<h:column>
+				<f:facet name="header">Id do usuário cadastrado</f:facet>
+				<h:outputText value="#{lancamento.usuario}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Empresa de origem</f:facet>
+				<h:outputText value="#{lancamento.empresaOrigem}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Empresa de destino</f:facet>
+				<h:outputText value="#{lancamento.empresaDestino}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Número da nota fiscal</f:facet>
+				<h:outputText value="#{lancamento.numeroNotaFiscal}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Editar</f:facet>
+				<h:commandLink value="Editar">
+					<f:setPropertyActionListener value="#{lancamento}" target="#{lancamentoBean.lancamento}" />
+				</h:commandLink>				
+			</h:column>
+			<h:column>
+				<f:facet name="header">Excluir</f:facet>
+				<h:commandLink value="Excluir" action="#{lancamentoBean.deletar}">
+					<f:setPropertyActionListener value="#{lancamento}" target="#{lancamentoBean.lancamento}" />
+				</h:commandLink>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{lancamentoBean.carregarLancamentos}"/>
+	</f:metadata>
+</h:body>
+</html>
+
