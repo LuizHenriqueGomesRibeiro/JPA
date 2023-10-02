@@ -54,6 +54,10 @@
 				<h:outputText value="#{lancamento.numeroNotaFiscal}" />
 			</h:column>
 			<h:column>
+				<f:facet name="header">Usuário</f:facet>
+				<h:outputText value="#{lancamento.usuario.nome}" />
+			</h:column>
+			<h:column>
 				<f:facet name="header">Editar</f:facet>
 				<h:commandLink value="Editar">
 					<f:setPropertyActionListener value="#{lancamento}" target="#{lancamentoBean.lancamento}" />

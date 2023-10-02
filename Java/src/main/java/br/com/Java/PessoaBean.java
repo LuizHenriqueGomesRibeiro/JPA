@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import br.com.dao.DaoGeneric;
+import br.com.dao.IDdaoPessoa;
+import br.com.dao.ImplementacaoDAOpessoa;
 import br.com.entidades.Pessoa;
-import br.com.jpautil.IDdaoPessoa;
-import br.com.jpautil.ImplementacaoDAOpessoa;
 
 @ViewScoped
 @ManagedBean(name = "pessoaBean")

@@ -1,9 +1,10 @@
-package br.com.jpautil;
+package br.com.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import br.com.entidades.Pessoa;
+import br.com.jpautil.JPAUtil;
 
 public class ImplementacaoDAOpessoa implements IDdaoPessoa {
 	

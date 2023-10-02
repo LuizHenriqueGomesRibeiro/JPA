@@ -1,4 +1,4 @@
-package br.com.jpautil;
+package br.com.dao;
 
 import br.com.entidades.Pessoa;
 
