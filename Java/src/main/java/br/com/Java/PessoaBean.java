@@ -3,10 +3,12 @@ package br.com.Java;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.facelets.FaceletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -29,18 +31,25 @@ public class PessoaBean {
 	}
 	
 	public String salvar() {
-		daoGeneric.salvar(pessoa);
-		pessoa = new Pessoa();
+		Long id = pessoa.getId();
+		if(id != null) {
+			pessoa = daoGeneric.merge(pessoa);
+			mostrarMensagem("Atualizado com sucesso.");	
+		}else {
+			daoGeneric.salvar(pessoa);
+			mostrarMensagem("Cadastrado com sucesso.");
+		}
 		carregarPessoas();
+		
 		return "";
 	}
 	
-	public String merge() {
-		pessoa = daoGeneric.merge(pessoa);
-		carregarPessoas();
-		return "";
+	private void mostrarMensagem(String string) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		FacesMessage message = new FacesMessage(string);
+		context.addMessage(null, message);
 	}
-	
+
 	public String limpar() {
 		pessoa = new Pessoa();
 		carregarPessoas();
@@ -51,6 +60,7 @@ public class PessoaBean {
 		daoGeneric.delete(pessoa);
 		pessoa = new Pessoa();
 		carregarPessoas();
+		mostrarMensagem("Excluído com sucesso.");
 		return "";
 	}
 	
