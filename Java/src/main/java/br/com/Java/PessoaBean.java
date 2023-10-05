@@ -1,5 +1,10 @@
 package br.com.Java;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +13,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.view.facelets.FaceletException;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
 
 import br.com.dao.DaoGeneric;
 import br.com.dao.IDdaoPessoa;
@@ -26,6 +33,36 @@ public class PessoaBean {
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 	private IDdaoPessoa daoPessoa = new ImplementacaoDAOpessoa();
 	
+	public void pesquisaCEP(AjaxBehaviorEvent ajax) {
+		try {
+			URL url = new URL("https://viacep.com.br/ws/" + pessoa.getCEP() + "/json/");
+			URLConnection connection = url.openConnection();
+			InputStream is = connection.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			
+			String CEP = "";
+			StringBuilder json = new StringBuilder();
+			
+			while((CEP = br.readLine()) != null) {
+				json.append(CEP);
+			}
+			
+			Pessoa gson = new Gson().fromJson(json.toString(), Pessoa.class);
+			
+			pessoa.setLogradouro(gson.getLogradouro());
+			pessoa.setBairro(gson.getBairro());
+			pessoa.setLocalidade(gson.getLocalidade());
+			pessoa.setUf(gson.getUf());
+			pessoa.setIbge(gson.getIbge());
+			pessoa.setDDD(gson.getDDD());
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			mostrarMensagem("CEP inválido.");
+		}
+	}
+	
 	public void carregarPessoas() {
 		pessoas = daoGeneric.getListEntity(pessoa);
 	}
@@ -39,12 +76,11 @@ public class PessoaBean {
 			daoGeneric.salvar(pessoa);
 			mostrarMensagem("Cadastrado com sucesso.");
 		}
-		carregarPessoas();
-		
 		return "";
 	}
 	
 	private void mostrarMensagem(String string) {
+		
 		FacesContext context = FacesContext.getCurrentInstance();
 		FacesMessage message = new FacesMessage(string);
 		context.addMessage(null, message);
@@ -52,14 +88,12 @@ public class PessoaBean {
 
 	public String limpar() {
 		pessoa = new Pessoa();
-		carregarPessoas();
 		return "";
 	}
 	
 	public String deletar() {
 		daoGeneric.delete(pessoa);
 		pessoa = new Pessoa();
-		carregarPessoas();
 		mostrarMensagem("Excluído com sucesso.");
 		return "";
 	}
@@ -75,6 +109,11 @@ public class PessoaBean {
 			HttpSession session = req.getSession();
 			
 			session.setAttribute("usuarioLogado", pessoaUser);
+			
+			String string = "Preencha os campos requiridos";
+			
+			FacesMessage message = new FacesMessage(string);
+			context.addMessage(null, message);
 			
 			return "primeiraPagina.jsf"; 
 		}

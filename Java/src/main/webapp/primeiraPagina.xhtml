@@ -20,30 +20,73 @@
 			<h:inputText readonly="true" value="#{pessoaBean.pessoa.id}" />
 
 			<h:outputLabel value="Nome:" />
-			<h:inputText value="#{pessoaBean.pessoa.nome}" />
+			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" 
+				validatorMessage="Informe um nome entre cinco e cinquenta caracteres" 
+				requiredMessage="Informe um nome válido">
+				<f:validateLength minimum="5" maximum="20" />
+			</h:inputText>
 
 			<h:outputLabel value="Sobrenome:" />
-			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" />
+			<h:inputText value="#{pessoaBean.pessoa.sobrenome}">
+				<f:validateLength minimum="5" maximum="20" />
+			</h:inputText>
 
 			<h:outputLabel value="Idade:" />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
 			
+			<h:outputLabel value="CEP:" />
+			<h:inputText value="#{pessoaBean.pessoa.CEP}">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCEP}" 
+				render="logradouro bairro localidade uf ddd ibge"/>
+			</h:inputText>
+			
+			<h:outputLabel value="Logradouro" />
+			<h:inputText id="logradouro" value="#{pessoaBean.pessoa.logradouro}" />
+			
+			<h:outputLabel value="Bairro:" />
+			<h:inputText id="bairro" value="#{pessoaBean.pessoa.bairro}" />
+			
+			<h:outputLabel value="Localidade:" />
+			<h:inputText id="localidade" value="#{pessoaBean.pessoa.localidade}" />
+			
+			<h:outputLabel value="Uf:" />
+			<h:inputText id="uf" value="#{pessoaBean.pessoa.uf}" />
+			
+			<h:outputLabel value="Ibge:" />
+			<h:inputText id="ibge" value="#{pessoaBean.pessoa.ibge}" />
+			
+			<h:outputLabel value="ddd:" />
+			<h:inputText id="ddd" value="#{pessoaBean.pessoa.DDD}" />
+			
 			<h:outputText value="Login:" />
-			<h:inputText value="#{pessoaBean.pessoa.login}" />
+			<h:inputText value="#{pessoaBean.pessoa.login}" required="true"
+				validatorMessage="Informe um login entre cinco e cinquenta caracteres" 
+				requiredMessage="Informe o login do usuário">
+				<f:validateLength minimum="5" maximum="20" />
+			</h:inputText>
 			
 			<h:outputText value="Senha:" />
-			<h:inputSecret value="#{pessoaBean.pessoa.senha}" />
+			<h:inputSecret value="#{pessoaBean.pessoa.senha}" required="true"
+				validatorMessage="Informe uma senha entre cinco e cinquenta caracteres" 
+				requiredMessage="Informe a senha do usuário">
+				<f:validateLength minimum="5" maximum="20" />
+			</h:inputSecret>
 			
 			<h:outputText value="Ativo:" />
 			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}" />
 			
+			<h:outputText value="Perfil:" />
 			<h:selectOneMenu id="perfil" value="#{pessoaBean.pessoa.perfil}" required="false">
 				<f:selectItem itemLabel="[-selecione-]" noSelectionOption="true"/>
 				<f:selectItem itemValue="ADMINISTRADOR" itemLabel="Administrador"/>
 				<f:selectItem itemValue="SECRETARIO" itemLabel="Secretário"/>
 				<f:selectItem itemValue="RECEPCIONISTA" itemLabel="Recepcionista"/>
 			</h:selectOneMenu>
-			<br/>
+			
+			<h:outputText value="Data de nascimento:" />
+			<h:inputText value="#{pessoaBean.pessoa.dataNascimento}" converterMessage="Data de nascimento em formato inválido">
+				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" timeZone="GMT-03:00"/>
+			</h:inputText>
 			<h:outputText value="Sexo:" />
 			<h:selectOneRadio value="#{pessoaBean.pessoa.sexo}">
 				<f:selectItem itemValue="M" itemLabel="Masculino"/>
@@ -70,44 +113,48 @@
 		<h:outputLabel/>
 		<h:panelGroup>
 			<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" />
-			<h:commandButton value="Limpar campos" action="#{pessoaBean.limpar}" />
+			<h:commandButton value="Limpar campos" id="botaoNovo" action="#{pessoaBean.limpar}">
+				<f:ajax execute="botaoNovo" render="@form"/>
+			</h:commandButton>
 			<h:commandButton rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}" value="Deletar registro" action="#{pessoaBean.deletar}"/>
 		</h:panelGroup>
 		<h:messages />
-		<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="2">
-			<f:facet name="header">
-				Lista de pessoas cadastradas	
-			</f:facet>
-			<h:column>
-				<f:facet name="header">Id</f:facet>
-				<h:outputText value="#{pessoa.id}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Nome</f:facet>
-				<h:outputText value="#{pessoa.nome}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Sobrenome</f:facet>
-				<h:outputText value="#{pessoa.sobrenome}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Idade</f:facet>
-				<h:outputText value="#{pessoa.idade}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Editar</f:facet>
-				<h:commandLink value="Editar">
-					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
-				</h:commandLink>				
-			</h:column>
-			<h:column>
-				<f:facet name="header">Excluir</f:facet>
-				<h:commandLink value="Excluir" action="#{pessoaBean.deletar}">
-					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
-				</h:commandLink>
-			</h:column>
-		</h:dataTable>
-	</h:form>
+		</h:form>
+		<h:form>
+			<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="2">
+				<f:facet name="header">
+					Lista de pessoas cadastradas	
+				</f:facet>
+				<h:column>
+					<f:facet name="header">Id</f:facet>
+					<h:outputText value="#{pessoa.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Nome</f:facet>
+					<h:outputText value="#{pessoa.nome}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Sobrenome</f:facet>
+					<h:outputText value="#{pessoa.sobrenome}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Idade</f:facet>
+					<h:outputText value="#{pessoa.idade}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Editar</f:facet>
+					<h:commandLink value="Editar">
+						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
+					</h:commandLink>				
+				</h:column>
+				<h:column>
+					<f:facet name="header">Excluir</f:facet>
+					<h:commandLink value="Excluir" action="#{pessoaBean.deletar}">
+						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" />
+					</h:commandLink>
+				</h:column>
+			</h:dataTable>
+		</h:form>
 	<f:metadata>
 		<f:event type="preRenderView" listener="#{pessoaBean.carregarPessoas}"/>
 	</f:metadata>
