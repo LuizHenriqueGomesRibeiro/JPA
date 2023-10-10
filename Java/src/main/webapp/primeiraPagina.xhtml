@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 >
 <h:head>
 	<title>Login</title>
@@ -22,7 +23,7 @@
 			<h:outputLabel value="Nome:" />
 			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" 
 				validatorMessage="Informe um nome entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe um nome válido">
+				requiredMessage="Informe um nome válido" pt:placeholder="Informe um nome válido">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 
@@ -58,17 +59,24 @@
 			<h:outputLabel value="ddd:" />
 			<h:inputText id="ddd" value="#{pessoaBean.pessoa.DDD}" />
 			
+			<h:outputLabel value="Estados:" />
+			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" immediate="true">
+				<f:selectItem itemLabel="--[Selecione]--" noSelectionOption="true" />
+				<f:selectItems value="#{pessoaBean.estados}"/>
+				<f:ajax event="change" execute="@this" listener="#{pessoaBean.carregaCidades}" />
+			</h:selectOneMenu>
+
 			<h:outputText value="Login:" />
 			<h:inputText value="#{pessoaBean.pessoa.login}" required="true"
 				validatorMessage="Informe um login entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe o login do usuário">
+				requiredMessage="Informe o login do usuário" pt:placeholder="Informe um login válido">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 			
 			<h:outputText value="Senha:" />
 			<h:inputSecret value="#{pessoaBean.pessoa.senha}" required="true"
 				validatorMessage="Informe uma senha entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe a senha do usuário">
+				requiredMessage="Informe a senha do usuário" pt:placeholder="Informe uma senha válida">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputSecret>
 			

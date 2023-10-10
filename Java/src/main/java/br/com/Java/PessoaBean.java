@@ -14,6 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,6 +33,23 @@ public class PessoaBean {
 	private DaoGeneric<Pessoa> daoGeneric = new DaoGeneric<Pessoa>();
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 	private IDdaoPessoa daoPessoa = new ImplementacaoDAOpessoa();
+	private List<SelectItem> estados;
+	
+	public void carregaCidades(AjaxBehaviorEvent event) {
+		
+	}
+	
+	public String deslogar() {
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		externalContext.getSessionMap().remove("usuarioLogado");
+		
+		HttpServletRequest httpServletRequest = (HttpServletRequest) context.getCurrentInstance().getExternalContext().getRequest();
+		httpServletRequest.getSession().invalidate();
+		
+		return "index.jsf";
+	}
 	
 	public void pesquisaCEP(AjaxBehaviorEvent ajax) {
 		try {
@@ -144,6 +162,10 @@ public class PessoaBean {
 	}
 	public void setPessoas(List<Pessoa> pessoas) {
 		this.pessoas = pessoas;
+	}
+	public List<SelectItem> getEstados() {
+		estados = daoPessoa.listarEstados();
+		return estados;
 	}
 	
 }

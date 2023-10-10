@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class Pessoa implements Serializable {
@@ -36,8 +37,21 @@ public class Pessoa implements Serializable {
 	private String uf;
 	private String ibge;
 	private String ddd;
+	@Transient
+	private Estados estados;
 	
-	
+	public String getDdd() {
+		return ddd;
+	}
+	public void setDdd(String ddd) {
+		this.ddd = ddd;
+	}
+	public Estados getEstados() {
+		return estados;
+	}
+	public void setEstados(Estados estados) {
+		this.estados = estados;
+	}
 	public String getLogradouro() {
 		return logradouro;
 	}

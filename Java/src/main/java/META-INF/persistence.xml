@@ -3,6 +3,8 @@
 	<persistence-unit name="Java">
 		<class>br.com.entidades.Pessoa</class>
 		<class>br.com.entidades.Lancamento</class>
+		<class>br.com.entidades.Estados</class>
+		<class>br.com.entidades.Cidades</class>
 			<properties>
 				<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/Java"/>
 				<property name="javax.persistence.jdbc.user" value="postgres"/>
