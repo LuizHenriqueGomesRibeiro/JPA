@@ -1,6 +1,11 @@
 package br.com.Java;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -15,8 +20,11 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 
@@ -34,6 +42,7 @@ public class PessoaBean {
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 	private IDdaoPessoa daoPessoa = new ImplementacaoDAOpessoa();
 	private List<SelectItem> estados;
+	private Part arquivofoto;
 	
 	public void carregaCidades(AjaxBehaviorEvent event) {
 		
@@ -85,9 +94,37 @@ public class PessoaBean {
 		pessoas = daoGeneric.getListEntity(pessoa);
 	}
 	
-	public String salvar() {
-		Long id = pessoa.getId();
-		if(id != null) {
+	public String salvar() throws IOException {
+		
+		byte[] imagem = null;
+		if(arquivofoto != null) {
+			imagem = getByte(arquivofoto.getInputStream());
+		}
+		
+		if(imagem != null && imagem.length > 0) {
+			pessoa.setFotoIconBase64Original(imagem);
+			System.out.println(imagem);
+			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagem));
+			
+			int type = bufferedImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+			int largura = 200;
+			int altura = 200;
+			
+			BufferedImage resizedImage = new BufferedImage(largura, altura, type);
+			Graphics2D g = resizedImage.createGraphics();
+			g.drawImage(resizedImage, 0, 0, largura, altura, null);
+			g.dispose();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			String extensao = arquivofoto.getContentType().split("\\/")[1];
+			ImageIO.write(resizedImage, extensao, baos);
+			String miniImagem = "data:" + arquivofoto.getContentType() + ";base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
+			System.out.println(miniImagem);
+			pessoa.setFotoIconBase64(miniImagem);
+			pessoa.setExtensao(extensao);
+		}
+		
+		if(pessoa.getId() != null) {
 			pessoa = daoGeneric.merge(pessoa);
 			mostrarMensagem("Atualizado com sucesso.");	
 		}else {
@@ -167,5 +204,33 @@ public class PessoaBean {
 		estados = daoPessoa.listarEstados();
 		return estados;
 	}
+	public Part getArquivofoto() {
+		return arquivofoto;
+	}
+	public void setArquivofoto(Part arquivofoto) {
+		this.arquivofoto = arquivofoto;
+	}
+	private byte[] getByte(InputStream inputstream) throws IOException {
 	
+		int length;
+		int size = 1024;
+		byte[] buf = null;
+		
+		if(inputstream instanceof ByteArrayInputStream) {
+			size = inputstream.available();
+			buf = new byte[size];
+			length = inputstream.read(buf, 0, size);
+		}else {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			buf = new byte[size];
+			
+			while((length = inputstream.read(buf, 0, size)) != -1) {
+				bos.write(buf, 0, length);
+			}
+			
+			buf = bos.toByteArray();
+		}
+		
+		return buf;
+	}
 }

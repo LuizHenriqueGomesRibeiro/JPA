@@ -12,7 +12,7 @@
 </h:head>
 <h:body>
 	<ui:include src="/menu.xhtml"/>
-	<h:form id="formPessoa" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
+	<h:form id="formPessoa" enctype="multipart/form-data" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
 		<h:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="Cadastro de usuário" />
@@ -32,6 +32,8 @@
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 
+			<h:outputLabel value="Foto:" />
+			<h:inputFile id="foto" value="#{pessoaBean.arquivofoto}"></h:inputFile>
 			<h:outputLabel value="Idade:" />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
 			
@@ -148,6 +150,10 @@
 				<h:column>
 					<f:facet name="header">Idade</f:facet>
 					<h:outputText value="#{pessoa.idade}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Foto</f:facet>
+					<h:graphicImage width="60" height="60" value="#{pessoa.fotoIconBase64}"/>
 				</h:column>
 				<h:column>
 					<f:facet name="header">Editar</f:facet>
