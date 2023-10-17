@@ -31,9 +31,10 @@
 			<h:inputText value="#{pessoaBean.pessoa.sobrenome}">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
-
+			
 			<h:outputLabel value="Foto:" />
 			<h:inputFile id="foto" value="#{pessoaBean.arquivofoto}"></h:inputFile>
+			
 			<h:outputLabel value="Idade:" />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
 			

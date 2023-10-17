@@ -95,7 +95,6 @@ public class PessoaBean {
 	}
 	
 	public String salvar() throws IOException {
-		
 		byte[] imagem = null;
 		if(arquivofoto != null) {
 			imagem = getByte(arquivofoto.getInputStream());
@@ -103,7 +102,6 @@ public class PessoaBean {
 		
 		if(imagem != null && imagem.length > 0) {
 			pessoa.setFotoIconBase64Original(imagem);
-			System.out.println(imagem);
 			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagem));
 			
 			int type = bufferedImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
@@ -112,14 +110,14 @@ public class PessoaBean {
 			
 			BufferedImage resizedImage = new BufferedImage(largura, altura, type);
 			Graphics2D g = resizedImage.createGraphics();
-			g.drawImage(resizedImage, 0, 0, largura, altura, null);
+			g.drawImage(bufferedImage, 0, 0, largura, altura, null);
 			g.dispose();
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			String extensao = arquivofoto.getContentType().split("\\/")[1];
 			ImageIO.write(resizedImage, extensao, baos);
+			
 			String miniImagem = "data:" + arquivofoto.getContentType() + ";base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
-			System.out.println(miniImagem);
 			pessoa.setFotoIconBase64(miniImagem);
 			pessoa.setExtensao(extensao);
 		}
@@ -131,7 +129,8 @@ public class PessoaBean {
 			daoGeneric.salvar(pessoa);
 			mostrarMensagem("Cadastrado com sucesso.");
 		}
-		return "";
+		
+		return "primeiraPagina.jsf";
 	}
 	
 	private void mostrarMensagem(String string) {
