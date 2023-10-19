@@ -18,7 +18,7 @@ public class DaoGeneric<E> {
 		entityManager.close();
 	}
 	
-public E merge(E entidade) {
+	public E merge(E entidade) {
 		
 		EntityManager gerenciador = JPAUtil.getEntityManager();
 		EntityTransaction transacao = gerenciador.getTransaction();
@@ -55,5 +55,14 @@ public E merge(E entidade) {
 		gerenciador.close();
 		
 		return retorno;
+	}
+	
+	public E consultar(Class<E> entidade, String id) {
+		EntityManager gerenciador = JPAUtil.getEntityManager();
+		EntityTransaction transacao = gerenciador.getTransaction();
+		transacao.begin();
+		E objeto = (E) gerenciador.find(entidade, Long.parseLong(id));
+		transacao.commit();
+		return objeto;
 	}
 }

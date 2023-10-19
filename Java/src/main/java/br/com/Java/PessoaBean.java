@@ -22,9 +22,12 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import javax.xml.bind.DatatypeConverter;
+
+import org.hibernate.mapping.Map;
 
 import com.google.gson.Gson;
 
@@ -36,7 +39,6 @@ import br.com.entidades.Pessoa;
 @ViewScoped
 @ManagedBean(name = "pessoaBean")
 public class PessoaBean {
-
 	private Pessoa pessoa = new Pessoa();
 	private DaoGeneric<Pessoa> daoGeneric = new DaoGeneric<Pessoa>();
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
@@ -49,14 +51,11 @@ public class PessoaBean {
 	}
 	
 	public String deslogar() {
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = context.getExternalContext();
 		externalContext.getSessionMap().remove("usuarioLogado");
-		
 		HttpServletRequest httpServletRequest = (HttpServletRequest) context.getCurrentInstance().getExternalContext().getRequest();
 		httpServletRequest.getSession().invalidate();
-		
 		return "index.jsf";
 	}
 	
@@ -82,7 +81,6 @@ public class PessoaBean {
 			pessoa.setUf(gson.getUf());
 			pessoa.setIbge(gson.getIbge());
 			pessoa.setDDD(gson.getDDD());
-			
 		}catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -181,6 +179,21 @@ public class PessoaBean {
 		return pessoa.getPerfil().equals(acesso);
 	}
 	
+	public void download() throws IOException {
+		String fileDownload  = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("fileDownload");
+		Pessoa pessoa = daoGeneric.consultar(Pessoa.class, fileDownload);
+		downloadResponse((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), pessoa);
+	}
+	
+	public void downloadResponse(HttpServletResponse response, Pessoa pessoa) throws IOException {
+		response.addHeader("Content-Disposition", "attachment; filename=download." + pessoa.getExtensao());
+		response.setContentType("application/octet-stream");
+		response.setContentLength(pessoa.getFotoIconBase64Original().length);
+		response.getOutputStream().write(pessoa.getFotoIconBase64Original());
+		response.getOutputStream().flush();
+		FacesContext.getCurrentInstance().responseComplete();
+	}
+	
 	public Pessoa getPessoa() {
 		return pessoa;
 	}
@@ -210,7 +223,6 @@ public class PessoaBean {
 		this.arquivofoto = arquivofoto;
 	}
 	private byte[] getByte(InputStream inputstream) throws IOException {
-	
 		int length;
 		int size = 1024;
 		byte[] buf = null;
