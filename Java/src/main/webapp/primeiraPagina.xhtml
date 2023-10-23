@@ -21,14 +21,12 @@
 			<h:inputText readonly="true" value="#{pessoaBean.pessoa.id}" />
 
 			<h:outputLabel value="Nome:" />
-			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" 
-				validatorMessage="Informe um nome entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe um nome válido" pt:placeholder="Informe um nome válido">
+			<h:inputText value="#{pessoaBean.pessoa.nome}" validatorMessage="Informe um nome entre cinco e cinquenta caracteres" pt:placeholder="Informe um nome válido">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 
 			<h:outputLabel value="Sobrenome:" />
-			<h:inputText value="#{pessoaBean.pessoa.sobrenome}">
+			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" valueChangeListener="#{pessoaBean.mudancaValor}"> 
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 			
@@ -70,17 +68,12 @@
 			</h:selectOneMenu>
 
 			<h:outputText value="Login:" />
-			<h:inputText value="#{pessoaBean.pessoa.login}" required="true"
-				validatorMessage="Informe um login entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe o login do usuário" pt:placeholder="Informe um login válido">
+			<h:inputText value="#{pessoaBean.pessoa.login}" pt:placeholder="Informe um login válido">
 				<f:validateLength minimum="5" maximum="20" />
 			</h:inputText>
 			
 			<h:outputText value="Senha:" />
-			<h:inputSecret value="#{pessoaBean.pessoa.senha}" required="true"
-				validatorMessage="Informe uma senha entre cinco e cinquenta caracteres" 
-				requiredMessage="Informe a senha do usuário" pt:placeholder="Informe uma senha válida">
-				<f:validateLength minimum="5" maximum="20" />
+			<h:inputSecret value="#{pessoaBean.pessoa.senha}" pt:placeholder="Informe uma senha válida">
 			</h:inputSecret>
 			
 			<h:outputText value="Ativo:" />
@@ -123,11 +116,11 @@
 		</h:panelGrid>
 		<h:outputLabel/>
 		<h:panelGroup>
-			<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" />
+			<h:commandButton value="Salvar" action="#{pessoaBean.salvar}"/>
 			<h:commandButton value="Limpar campos" id="botaoNovo" action="#{pessoaBean.limpar}">
 				<f:ajax execute="botaoNovo" render="@form"/>
 			</h:commandButton>
-			<h:commandButton rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}" value="Deletar registro" action="#{pessoaBean.deletar}"/>
+			<h:commandButton rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}" value="Deletar registro" action="#{pessoaBean.deletar}" immediate="true"/>
 		</h:panelGroup>
 		<h:messages />
 		</h:form>

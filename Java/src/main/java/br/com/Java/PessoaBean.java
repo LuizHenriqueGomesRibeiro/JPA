@@ -19,6 +19,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -46,15 +47,14 @@ public class PessoaBean {
 	private List<SelectItem> estados;
 	private Part arquivofoto;
 	
-	public void carregaCidades(AjaxBehaviorEvent event) {
-		
+	public void mudancaValor(ValueChangeEvent evento) {
 	}
 	
 	public String deslogar() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = context.getExternalContext();
-		externalContext.getSessionMap().remove("usuarioLogado");
 		HttpServletRequest httpServletRequest = (HttpServletRequest) context.getCurrentInstance().getExternalContext().getRequest();
+		externalContext.getSessionMap().remove("usuarioLogado");
 		httpServletRequest.getSession().invalidate();
 		return "index.jsf";
 	}
@@ -92,34 +92,19 @@ public class PessoaBean {
 		pessoas = daoGeneric.getListEntity(pessoa);
 	}
 	
+	
 	public String salvar() throws IOException {
 		byte[] imagem = null;
 		if(arquivofoto != null) {
 			imagem = getByte(arquivofoto.getInputStream());
-		}
-		
+		}	
 		if(imagem != null && imagem.length > 0) {
-			pessoa.setFotoIconBase64Original(imagem);
-			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagem));
-			
-			int type = bufferedImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
-			int largura = 200;
-			int altura = 200;
-			
-			BufferedImage resizedImage = new BufferedImage(largura, altura, type);
-			Graphics2D g = resizedImage.createGraphics();
-			g.drawImage(bufferedImage, 0, 0, largura, altura, null);
-			g.dispose();
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			String extensao = arquivofoto.getContentType().split("\\/")[1];
-			ImageIO.write(resizedImage, extensao, baos);
-			
-			String miniImagem = "data:" + arquivofoto.getContentType() + ";base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
-			pessoa.setFotoIconBase64(miniImagem);
-			pessoa.setExtensao(extensao);
+			salvarImagem(imagem);
 		}
-		
+		return salvarUsuario();
+	}
+	
+	public String salvarUsuario() {
 		if(pessoa.getId() != null) {
 			pessoa = daoGeneric.merge(pessoa);
 			mostrarMensagem("Atualizado com sucesso.");	
@@ -127,12 +112,45 @@ public class PessoaBean {
 			daoGeneric.salvar(pessoa);
 			mostrarMensagem("Cadastrado com sucesso.");
 		}
-		
 		return "primeiraPagina.jsf";
 	}
 	
+	public void salvarImagem(byte[] imagem) throws IOException {
+		pessoa.setFotoIconBase64Original(imagem);
+		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagem));
+		salvarDimensoesImagem(bufferedImage);
+	}
+	
+	public String salvarDimensoesImagem(BufferedImage bufferedImage) throws IOException {
+		int type = bufferedImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+		int largura = 200;
+		int altura = 200;
+		return salvarRedimensionarImagem(type, bufferedImage, largura, altura);
+	}
+	
+	public String salvarRedimensionarImagem(int type, BufferedImage bufferedImage, int largura, int altura) throws IOException {
+		BufferedImage resizedImage = new BufferedImage(largura, altura, type);
+		Graphics2D graphics2D = resizedImage.createGraphics();
+		graphics2D.drawImage(bufferedImage, 0, 0, largura, altura, null);
+		graphics2D.dispose();
+		return salvarImagemToByte(resizedImage);
+	}
+	
+	public String salvarImagemToByte(BufferedImage resizedImage) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		String extensao = arquivofoto.getContentType().split("\\/")[1];
+		ImageIO.write(resizedImage, extensao, baos);
+		return salvarMiniImagem(baos, extensao);
+	}
+	
+	public String salvarMiniImagem(ByteArrayOutputStream baos, String extensao) {
+		String miniImagem = "data:" + arquivofoto.getContentType() + ";base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
+		pessoa.setFotoIconBase64(miniImagem);
+		pessoa.setExtensao(extensao);
+		return miniImagem;
+	}
+
 	private void mostrarMensagem(String string) {
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		FacesMessage message = new FacesMessage(string);
 		context.addMessage(null, message);
@@ -152,24 +170,27 @@ public class PessoaBean {
 	
 	public String logar() {
 		Pessoa pessoaUser = daoPessoa.consultarUsuario(pessoa.getLogin(), pessoa.getSenha());
-		
+		return logarAlternar(pessoaUser);
+	}
+	
+	public String logarAlternar(Pessoa pessoaUser) {
 		if(pessoaUser != null) {
-			FacesContext context = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = context.getExternalContext();
-
-			HttpServletRequest req = (HttpServletRequest) externalContext.getRequest();
-			HttpSession session = req.getSession();
-			
-			session.setAttribute("usuarioLogado", pessoaUser);
-			
-			String string = "Preencha os campos requiridos";
-			
-			FacesMessage message = new FacesMessage(string);
-			context.addMessage(null, message);
-			
-			return "primeiraPagina.jsf"; 
+			return logarContextos(pessoaUser);
+		}else {
+			return "index.jsf";
 		}
-		return "index.jsf";
+	}
+	
+	public String logarContextos(Pessoa pessoaUser) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpSession session = ((HttpServletRequest) context.getExternalContext().getRequest()).getSession();
+		return logarSets(context, session, pessoaUser);
+	}
+	
+	public String logarSets(FacesContext context, HttpSession session, Pessoa pessoaUser) {
+		session.setAttribute("usuarioLogado", pessoaUser);
+		context.addMessage(null, new FacesMessage("Preencha os campos requiridos"));
+		return "primeiraPagina.jsf";
 	}
 	
 	public boolean permiteAcesso(String acesso) {
@@ -222,11 +243,11 @@ public class PessoaBean {
 	public void setArquivofoto(Part arquivofoto) {
 		this.arquivofoto = arquivofoto;
 	}
+	
 	private byte[] getByte(InputStream inputstream) throws IOException {
 		int length;
 		int size = 1024;
 		byte[] buf = null;
-		
 		if(inputstream instanceof ByteArrayInputStream) {
 			size = inputstream.available();
 			buf = new byte[size];
@@ -234,14 +255,11 @@ public class PessoaBean {
 		}else {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			buf = new byte[size];
-			
 			while((length = inputstream.read(buf, 0, size)) != -1) {
 				bos.write(buf, 0, length);
 			}
-			
 			buf = bos.toByteArray();
 		}
-		
 		return buf;
 	}
 }

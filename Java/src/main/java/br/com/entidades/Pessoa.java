@@ -15,6 +15,11 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Pessoa implements Serializable {
@@ -23,13 +28,26 @@ public class Pessoa implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	@Size(min = 5, max = 20, message = "O nome deve ter entre cinco e vinte caracteres.")
+	@NotEmpty(message = "Informe um nome válido.")
+	@NotNull(message = "Informe um nome válido.")
 	private String nome;
+	@Size(min = 5, max = 20, message = "O sobrenome deve ter entre cinco e vinte caracteres.")
+	@NotEmpty(message = "Informe um sobrenome válido.")
+	@NotNull(message = "Informe um sobrenome válido.")
 	private String sobrenome;
+	@DecimalMin(value = "18", message = "O usuário deve ser maior de idade.")
 	private Integer idade;
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
 	private Boolean ativo;
+	@Size(min = 5, max = 20, message = "A senha deve ter entre cinco e vinte caracteres.")
+	@NotEmpty(message = "Informe uma senha válida.")
+	@NotNull(message = "Informe uma senha válida.")
 	private String senha;
+	@Size(min = 5, max = 20, message = "O login deve ter entre cinco e vinte caracteres.")
+	@NotEmpty(message = "Informe um login válido.")
+	@NotNull(message = "Informe um login válido.")
 	private String login;
 	private String perfil;
 	private String sexo;
