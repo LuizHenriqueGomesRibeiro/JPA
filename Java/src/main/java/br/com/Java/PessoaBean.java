@@ -12,7 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import javax.xml.bind.DatatypeConverter;
-
-import org.hibernate.mapping.Map;
 
 import com.google.gson.Gson;
 
@@ -201,7 +199,9 @@ public class PessoaBean {
 	}
 	
 	public void download() throws IOException {
-		String fileDownload  = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("fileDownload");
+		//String fileDownload  = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("fileDownload");
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String fileDownload = params.get("fileDownload");
 		Pessoa pessoa = daoGeneric.consultar(Pessoa.class, fileDownload);
 		downloadResponse((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse(), pessoa);
 	}
