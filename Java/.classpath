@@ -41,11 +41,10 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javax.persistence-api-2.2.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jsf-api-2.2.14.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jsf-impl-2.2.14.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Luiz/Desktop/weld-web-4.0.1.Final.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
